@@ -1,9 +1,11 @@
 package com.ldar01.demoemployees.controller;
 
+import com.ldar01.demoemployees.dto.request.vacation.VacationRequest;
 import com.ldar01.demoemployees.dto.response.GeneralResponse;
 import com.ldar01.demoemployees.dto.request.employee.EmployeeRequest;
 import com.ldar01.demoemployees.dto.request.employee.EmployeeUpdateRequest;
 import com.ldar01.demoemployees.dto.response.employee.EmployeeResponse;
+import com.ldar01.demoemployees.dto.response.vacation.VacationResponse;
 import com.ldar01.demoemployees.exception.EmployeeNotFoundException;
 import com.ldar01.demoemployees.service.EmployeeService;
 import jakarta.validation.Valid;
@@ -61,6 +63,17 @@ public class EmployeeController {
         EmployeeResponse employee = employeeService.findById(id);
         employeeService.delete(id);
         return buildResponse("Employee deleted", HttpStatus.OK, employee);
+    }
+
+    @GetMapping("/employees/{id}/vacation-requests")
+    public ResponseEntity<GeneralResponse> getVacationRequests(@PathVariable int id) {
+        List<VacationResponse> vacations = employeeService.getVacationRequests(id);
+
+        if (vacations.isEmpty()) {
+            throw new EmployeeNotFoundException("No vacation requests found for employee with ID: " + id);
+        }
+
+        return buildResponse("Vacation requests found", HttpStatus.OK, vacations);
     }
 
     public ResponseEntity<GeneralResponse> buildResponse(String message, HttpStatus status, Object data) {

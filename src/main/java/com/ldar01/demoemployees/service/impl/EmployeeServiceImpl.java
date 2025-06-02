@@ -4,15 +4,17 @@ import com.ldar01.demoemployees.dto.request.employee.EmployeeRequest;
 import com.ldar01.demoemployees.dto.request.employee.EmployeeUpdateRequest;
 import com.ldar01.demoemployees.dto.response.department.DepartmentResponse;
 import com.ldar01.demoemployees.dto.response.employee.EmployeeResponse;
-import com.ldar01.demoemployees.entities.Department;
-import com.ldar01.demoemployees.exception.DepartmentNotFoundException;
+import com.ldar01.demoemployees.dto.response.vacation.VacationResponse;
+import com.ldar01.demoemployees.entities.Employee;
+import com.ldar01.demoemployees.entities.Vacation;
 import com.ldar01.demoemployees.exception.EmployeeNotFoundException;
-import com.ldar01.demoemployees.repository.DepartmentRepository;
 import com.ldar01.demoemployees.repository.EmployeeRepository;
+import com.ldar01.demoemployees.repository.VacationRepository;
 import com.ldar01.demoemployees.service.DepartmentService;
 import com.ldar01.demoemployees.service.EmployeeService;
 import com.ldar01.demoemployees.utils.mappers.DepartmentMapper;
 import com.ldar01.demoemployees.utils.mappers.EmployeeMapper;
+import com.ldar01.demoemployees.utils.mappers.VacationMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -63,5 +65,20 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public void delete(int id) {
         employeeRepository.deleteById(id);
+    }
+
+    @Autowired
+    private VacationRepository vacationRepository;
+
+    @Override
+    public List<VacationResponse> getVacationRequests(int employeeId) {
+        // Opcional: valida si el empleado existe
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new EmployeeNotFoundException("Employee not found with ID: " + employeeId));
+
+        // Busca las vacaciones asociadas
+        List<Vacation> vacations = vacationRepository.findByEmployeeId(employeeId);
+
+        return VacationMapper.toDTOList(vacations);
     }
 }

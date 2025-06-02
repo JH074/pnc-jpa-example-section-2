@@ -10,6 +10,16 @@ import java.util.List;
 
 public class EmployeeMapper {
 
+    public static Employee toEntity(EmployeeResponse employeeDTO) {
+        return Employee.builder()
+                .id(employeeDTO.getEmployeeId())
+                .name(employeeDTO.getFirstName())
+                .lastName(employeeDTO.getLastName())
+                .email(employeeDTO.getEmail())
+                .department(Department.builder().departmentName(employeeDTO.getDepartment()).build())
+                .build();
+    }
+
     public static Employee toEntityCreate(EmployeeRequest employeeDTO, Department department) {
         return Employee.builder()
                 .name(employeeDTO.getFirstName())
